@@ -1,0 +1,39 @@
+---
+# tasks file for egeneralov.npm
+
+- name: Install system-wide dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items:
+    - apt-transport-https
+    - build-essential
+    - gnupg2
+
+- name: Ensure apt keys are presented
+  apt_key:
+    url: "{{ item }}"
+    state: present
+  with_items:
+    - "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    - "https://dl.yarnpkg.com/debian/pubkey.gpg"
+
+
+- name: Ensure repository are presented
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+  with_items:
+    - "deb https://deb.nodesource.com/node_10.x {{ ansible_distribution_release }} main"
+    - "deb https://dl.yarnpkg.com/debian/ stable main"
+
+- name: Ensure nodejs, npm and yarn are installed
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - nodejs
+    - yarn
